@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>dev_set_color ('green')</l>
+<l>dev_set_draw ('margin')</l>
+<l>dev_update_off ()</l>
+<l>read_image (Image, 'E:/5678/Checker5678_20190828/Checker5678/Image_20191214155002125.bmp')</l>
+<l>dev_display (Image)</l>
+<l>*gen_rectangle1 (ROI_0, 1413.18, 3314.03, 1660.33, 3553.89)</l>
+<l>gen_rectangle2 (ROI_0, 1024.89, 1402.74, rad(4.21657), 1397.9, 185.084)</l>
+<l>gen_rectangle1 (ROI_REF, 882.575, 2842.9, 1036.75, 2922.45)</l>
+<c></c>
+<l>*gen_rectangle2 (ROI_0, 1415.08, 1458.21, rad(-3.34037), 1341.78, 259.067)</l>
+<l>*gen_rectangle1 (ROI_REF, 1325.29, 2922.97, 1453.89, 3080.64)</l>
+<c>*孔的灰度相对于参考平面的偏移量</c>
+<l>deviation_value1:=110</l>
+<c>*上下边缘灰度相对于参考平面的偏移量</c>
+<l>deviation_value2:=20</l>
+<l>deviation_value3:=70</l>
+<c>*像素与物理尺寸的比例， mm/pix</c>
+<l>factor:=0.00782186295619339578507368045917</l>
+<c>*0.00814423770749481619269917954949</c>
+<c>*孔位距离上缘的框选距离</c>
+<l>half_margin:=180</l>
+<l>thr:=24</l>
+<l>sigma:=4</l>
+<l>DoubleCircle2 (Image, ROI_0, ROI_REF, deviation_value1, deviation_value2, deviation_value3, factor, half_margin, 3600, thr, sigma, isError, ErrorCode, length, width, angle, center_x, center_y, dis_rr, up_margin, down_margin)</l>
+<c></c>
+<l>gen_rectangle1 (ROI_0, 806.573, 3129.63, 1004.14, 3362.44)</l>
+<l>*gen_rectangle1 (ROI_0, 1398.98, 3275.29, 1697.26, 3602.62)</l>
+<l>gen_rectangle1 (ROI_REF, 871.483, 3053.11, 977.798, 3147.9)</l>
+<l>factor:=0.00814423770749481619269917954949</l>
+<l>SingleCircle (Image, ROI_0, ROI_REF, deviation_value1, deviation_value2, factor, 3600, radius, center_x1, center_y1, isError1, ErrorCode1)</l>
+<l>return ()</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+<procedure name="DrawIndica">
+<interface>
+<ic>
+<par name="x1" base_type="ctrl" dimension="0"/>
+<par name="y1" base_type="ctrl" dimension="0"/>
+<par name="x2" base_type="ctrl" dimension="0"/>
+<par name="y2" base_type="ctrl" dimension="0"/>
+<par name="phi" base_type="ctrl" dimension="0"/>
+<par name="margin" base_type="ctrl" dimension="0"/>
+<par name="value" base_type="ctrl" dimension="0"/>
+<par name="windowhandle" base_type="ctrl" dimension="0"/>
+<par name="dir" base_type="ctrl" dimension="0"/>
+</ic>
+</interface>
+<body>
+<l>dev_set_color ('green')</l>
+<l>hom_mat2d_identity (HomMat2DIdentity)</l>
+<l>p:=rad(90)+phi</l>
+<l>if (dir==0)</l>
+<l>    hom_mat2d_rotate (HomMat2DIdentity, -p, x1, y1,HomMat2DRotate2)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, x1+margin, y1, Qx1, Qy1)</l>
+<l>    gen_cross_contour_xld (Cross1, y1, x1, 36, phi)</l>
+<l>    dev_display (Cross1)</l>
+<c>    </c>
+<l>    hom_mat2d_rotate (HomMat2DIdentity,  -rad(90)-phi, x2, y2,HomMat2DRotate2)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, x2+margin, y2, Qx2, Qy2)</l>
+<l>    gen_cross_contour_xld (Cross2, y2, x2, 36, phi)</l>
+<l>    dev_display (Cross2)    </l>
+<l>else</l>
+<l>    hom_mat2d_rotate (HomMat2DIdentity, -p, x1, y1,HomMat2DRotate2)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, x1, y1+margin, Qx1, Qy1)</l>
+<l>    gen_cross_contour_xld (Cross3, y1, x1, 36, phi)</l>
+<l>    dev_display (Cross3)</l>
+<c>    </c>
+<l>    hom_mat2d_rotate (HomMat2DIdentity,  -rad(90)-phi, x2, y2,HomMat2DRotate2)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, x2, y2+margin, Qx2, Qy2)</l>
+<l>    gen_cross_contour_xld (Cross4, y2, x2, 36, phi)</l>
+<l>    dev_display (Cross4)   </l>
+<l>endif</l>
+<c></c>
+<c></c>
+<l>gen_region_line (RegionLines, Qy2, Qx2, y2, x2)</l>
+<l>gen_region_line (RegionLines1, Qy1, Qx1,  y1, x1)</l>
+<l>gen_region_line (RegionLines0, y2, x2, y1, x1)</l>
+<l>gen_arrow_contour_xld (Arrow, Qy2, Qx2, Qy1, Qx1, 25, 25)</l>
+<l>gen_arrow_contour_xld (Arrow2, Qy1, Qx1, Qy2, Qx2, 25, 25)</l>
+<l>dev_display (Arrow)</l>
+<l>dev_display (Arrow2)</l>
+<l>dev_display (RegionLines)</l>
+<l>dev_display (RegionLines1)</l>
+<l>dev_display (RegionLines0)</l>
+<l>set_tposition (windowhandle, (Qy1+Qy2)/2.0, (Qx1+Qx2)/2.0)</l>
+<l>g:=value$'.4f'</l>
+<l>write_string (windowhandle, g)</l>
+<l>return ()</l>
+</body>
+<docu id="DrawIndica">
+<parameters>
+<parameter id="dir">
+<default_value>0</default_value>
+<description lang="zh_CN">方向， 0代表水平画， 1代表垂直画</description>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="margin"/>
+<parameter id="phi"/>
+<parameter id="value"/>
+<parameter id="windowhandle"/>
+<parameter id="x1"/>
+<parameter id="x2"/>
+<parameter id="y1"/>
+<parameter id="y2"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="DoubleCircle2">
+<interface>
+<io>
+<par name="imagesrc" base_type="iconic" dimension="0"/>
+<par name="regionsrc" base_type="iconic" dimension="0"/>
+<par name="regionref" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="deviation_value1" base_type="ctrl" dimension="0"/>
+<par name="deviation_value2" base_type="ctrl" dimension="0"/>
+<par name="deviation_value3" base_type="ctrl" dimension="0"/>
+<par name="factor" base_type="ctrl" dimension="0"/>
+<par name="half_margin" base_type="ctrl" dimension="0"/>
+<par name="WindowHandle" base_type="ctrl" dimension="0"/>
+<par name="thr" base_type="ctrl" dimension="0"/>
+<par name="sigma" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="isError" base_type="ctrl" dimension="0"/>
+<par name="ErrorCode" base_type="ctrl" dimension="0"/>
+<par name="length" base_type="ctrl" dimension="0"/>
+<par name="width" base_type="ctrl" dimension="0"/>
+<par name="angle" base_type="ctrl" dimension="0"/>
+<par name="center_x" base_type="ctrl" dimension="0"/>
+<par name="center_y" base_type="ctrl" dimension="0"/>
+<par name="dis_rr" base_type="ctrl" dimension="0"/>
+<par name="up_margin" base_type="ctrl" dimension="0"/>
+<par name="down_margin" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>isError:=false</l>
+<l>ErrorCode:=0</l>
+<c></c>
+<c></c>
+<l>try</l>
+<c>    *求参考平面灰度值</c>
+<l>    gray_features (regionref, imagesrc, 'mean', Value)</l>
+<l>    gray_ref:=Value</l>
+<c>    *求出检测的区域的面积</c>
+<l>    area_center (regionsrc, AreaRegion, Row5, Column5)</l>
+<c>    *抠出目标</c>
+<l>*    deviation_value1:=50</l>
+<l>    reduce_domain (imagesrc, regionsrc, ImageReduced)</l>
+<l>    *threshold (ImageReduced, Union, [0,242], [99,255])</l>
+<l>    th1:=0</l>
+<l>    threshold (ImageReduced, Union, [0,gray_ref+deviation_value2], [gray_ref-deviation_value1,255])    </l>
+<c></c>
+<l>    *union1 (Union, Union)</l>
+<c>    *预处理</c>
+<l>    closing_circle (Union, RegionClosing, 5.5)</l>
+<l>    fill_up (RegionClosing, RegionFillUp)</l>
+<l>    erosion_circle (RegionFillUp, RegionErosion, 5.5)</l>
+<l>    dilation_circle (RegionErosion, RegionDilation, 5.5)</l>
+<l>    connection (RegionDilation, ConnectedRegions)</l>
+<l>    select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', AreaRegion*(1/3.0), AreaRegion)</l>
+<l>    count_obj (SelectedRegions, Number1)</l>
+<l>    if(Number1 &lt;1)</l>
+<l>        isError:=true</l>
+<l>        ErrorCode:=1</l>
+<c>        *返回1</c>
+<l>        return ()</l>
+<l>    endif</l>
+<l>    select_obj (SelectedRegions, ObjectSelected1, 1)</l>
+<c>    *拟合成矩形 此时Length2接近圆的直径</c>
+<l>    shape_trans (ObjectSelected1, RegionTrans, 'convex')</l>
+<l>    shape_trans (RegionTrans, RegionTrans1, 'rectangle2')</l>
+<l>    reduce_domain (ImageReduced, RegionTrans1, ImageReduced1)</l>
+<l>    smallest_rectangle2 (RegionTrans1, Row, Column, Phi, Length1, Length2)</l>
+<l>    gen_cross_contour_xld (Cross, Row, Column, 6, Phi)</l>
+<c>    *求两个最远的端点坐标</c>
+<l>    hom_mat2d_identity (HomMat2DIdentity)</l>
+<l>    hom_mat2d_rotate (HomMat2DIdentity, -Phi, Column, Row, HomMat2DRotate)</l>
+<l>    hom_mat2d_rotate (HomMat2DIdentity, Phi, Column, Row, HomMat2DRotate2)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate, Column+Length1, Row, Qx, Qy)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate, Column-Length1, Row, Qx2, Qy2)</l>
+<c>    *最长距离的连线</c>
+<l>    gen_cross_contour_xld (Cross1, Qy2, Qx2, 10, Phi)</l>
+<l>    gen_cross_contour_xld (Cross2, Qy, Qx, 10, Phi)</l>
+<l>    gen_region_line (RegionLines, Qy2, Qx2, Qy, Qx)</l>
+<l>    dev_display (RegionLines)</l>
+<c>    *left左圆</c>
+<l>    gen_contour_region_xld (RegionTrans, Contours, 'border')</l>
+<l>    gen_rectangle2 (RectangleLeft, Qy2, Qx2, Phi, Length2+20, Length2+20)</l>
+<c>    </c>
+<l>    smallest_rectangle1 (RectangleLeft, Row11, Column11, Row2, Column2)</l>
+<l>    gen_rectangle1 (Rectangle, Row11, Column11, Row2, Column2)</l>
+<l>    clip_contours_xld (Contours, ClippedContours, Row11, Column11, Row2, Column2)</l>
+<l>    fit_circle_contour_xld (ClippedContours, 'geotukey', -1, 2, 0, 10, 1, Row1, Column1, Radius, StartPhi, EndPhi, PointOrder)</l>
+<l>    if(|Row1| != 1)</l>
+<l>        isError:=true</l>
+<l>        ErrorCode:=2</l>
+<c>        *返回1</c>
+<l>        return ()</l>
+<l>    endif</l>
+<c>    </c>
+<l>    gen_circle_contour_xld (ContCircle, Row1, Column1, Radius, 0, 6.28318, 'positive', 1)</l>
+<l>    gen_cross_contour_xld (Cross3,  Row1, Column1, 16, Phi)</l>
+<l>    dev_display (Cross3)</l>
+<l>    dev_display(ContCircle)</l>
+<c>    *right右圆</c>
+<l>    gen_rectangle2 (RectangleLeft, Qy, Qx, Phi, Length2+20, Length2+20)</l>
+<l>    smallest_rectangle1 (RectangleLeft, Row12, Column12, Row21, Column21)</l>
+<l>    gen_rectangle1 (Rectangle1, Row12, Column12, Row21, Column21)</l>
+<l>    clip_contours_xld (Contours, ClippedContours1, Row12, Column12, Row21, Column21)</l>
+<l>    fit_circle_contour_xld (ClippedContours1, 'geotukey', -1, 2, 0, 10, 1, Row2, Column2, Radius2, StartPhi, EndPhi, PointOrder)</l>
+<l>    if(|Row2| != 1)</l>
+<l>        isError:=true</l>
+<l>        ErrorCode:=3</l>
+<c>        *返回3</c>
+<l>        return ()</l>
+<l>    endif</l>
+<l>    gen_circle_contour_xld (ContCircle1, Row2, Column2, Radius2 , 0, 6.28318, 'positive', 1)</l>
+<l>    gen_cross_contour_xld (Cross9, Row2, Column2, 16, Phi)</l>
+<l>    dev_display (ContCircle1)</l>
+<l>    dev_display (Cross9)</l>
+<c>    *result</c>
+<c>    *两个圆心连线的中心center point</c>
+<l>    cen_x := (Column1 + Column2)/2.0</l>
+<l>    cen_y := (Row2 + Row1)/2.0</l>
+<c>    *</c>
+<l>    hom_mat2d_identity (HomMat0)</l>
+<l>    p:=rad(90)+Phi</l>
+<l>    hom_mat2d_rotate (HomMat0, -p, Column2, Row2, HomMat0_R)</l>
+<l>    affine_trans_point_2d (HomMat0_R, Column2+Radius2, Row2, upx1, upy1)</l>
+<l>    gen_cross_contour_xld (CrossUp, upy1,upx1, 36, Phi)</l>
+<c>    </c>
+<l>    affine_trans_point_2d (HomMat0_R, Column2-Radius2, Row2, dnx2, dny2)</l>
+<l>    gen_cross_contour_xld (CrossUp, dny2, dnx2, 36, Phi)</l>
+<c>    *</c>
+<c>    *</c>
+<c>    *</c>
+<l>    Phi1:=Phi</l>
+<l>    Row3:=Row</l>
+<l>    Column3:=Column</l>
+<l>    Length11:=Length1+40</l>
+<l>    Length21:=Length2+half_margin</l>
+<l>    hom_mat2d_identity (HomMat2DIdentity3)</l>
+<l>    hom_mat2d_rotate (HomMat2DIdentity3, -Phi1, Row3, Column3,HomMat2DRotate2)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, Column3+Length11, Row3+Length21, Qx11, Qy11)</l>
+<l>    gen_cross_contour_xld (Cross4, Qy11, Qx11, 6, Phi1)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, Column3 -Length11, Row3+Length21, Qx21, Qy21)</l>
+<l>    gen_cross_contour_xld (Cross5, Qy21, Qx21, 6, Phi1)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, Column3-Length11, Row3-Length21, Qx31, Qy31)</l>
+<l>    gen_cross_contour_xld (Cross6, Qy31, Qx31, 6, Phi1)</l>
+<l>    affine_trans_point_2d (HomMat2DRotate2, Column3+Length11, Row3-Length21, Qx41, Qy41)</l>
+<l>    gen_cross_contour_xld (Cross7, Qy41, Qx41, 6, Phi1)</l>
+<c>    *求出边缘点</c>
+<c>    * Measure 01: Code generated by Measure 01</c>
+<c>    * Measure 01: Prepare measurement</c>
+<c>    </c>
+<l>    *AmplitudeThreshold := 24</l>
+<l>    AmplitudeThreshold := thr</l>
+<l>    RoiWidthLen2 := 60.5</l>
+<l>    *Sigma:=4</l>
+<l>    Sigma := sigma</l>
+<l>    set_system ('int_zooming', 'true')</l>
+<c>    * Measure 01: Coordinates for line Measure 01 [0]</c>
+<l>    LineRowStart_Measure_01_0 := Qy41</l>
+<l>    LineColumnStart_Measure_01_0 := Qx41</l>
+<l>    LineRowEnd_Measure_01_0 := Qy11</l>
+<l>    LineColumnEnd_Measure_01_0 := Qx11</l>
+<c>    * Measure 01: Convert coordinates to rectangle2 type</c>
+<l>    TmpCtrl_Row := 0.5*(LineRowStart_Measure_01_0+LineRowEnd_Measure_01_0)</l>
+<l>    TmpCtrl_Column := 0.5*(LineColumnStart_Measure_01_0+LineColumnEnd_Measure_01_0)</l>
+<l>    TmpCtrl_Dr := LineRowStart_Measure_01_0-LineRowEnd_Measure_01_0</l>
+<l>    TmpCtrl_Dc := LineColumnEnd_Measure_01_0-LineColumnStart_Measure_01_0</l>
+<l>    TmpCtrl_Phi := atan2(TmpCtrl_Dr, TmpCtrl_Dc)</l>
+<l>    TmpCtrl_Len1 := 0.5*sqrt(TmpCtrl_Dr*TmpCtrl_Dr + TmpCtrl_Dc*TmpCtrl_Dc)</l>
+<l>    TmpCtrl_Len2 := RoiWidthLen2</l>
+<c>    * Measure 01: Create measure for line Measure 01 [0]</c>
+<c>    * Measure 01: Attention: This assumes all images have the same size!</c>
+<l>    gen_measure_rectangle2 (TmpCtrl_Row, TmpCtrl_Column, TmpCtrl_Phi, TmpCtrl_Len1, TmpCtrl_Len2, 4024, 3036, 'nearest_neighbor', MsrHandle_Measure_01_0)</l>
+<l>    gen_region_line (RegionLines1, LineRowStart_Measure_01_0, LineColumnStart_Measure_01_0, LineRowEnd_Measure_01_0, LineColumnEnd_Measure_01_0)</l>
+<c>    * Measure 01: ***************************************************************</c>
+<c>    * Measure 01: * The code which follows is to be executed once / measurement *</c>
+<c>    * Measure 01: ***************************************************************</c>
+<c>    * Measure 01: *************</c>
+<c>    * Measure 01: * ATTENTION *</c>
+<c>    * Measure 01: *************</c>
+<c>    * Measure 01: The image from the graphics window is not available. At this point,</c>
+<c>    * Measure 01: it is necessary to ensure an image is stored in the variable 'Image'</c>
+<c>    * Measure 01: Execute measurements</c>
+<l>    measure_pos (imagesrc, MsrHandle_Measure_01_0, Sigma, AmplitudeThreshold, 'all', 'all', Row_Measure_01_0, Column_Measure_01_0, Amplitude_Measure_01_0, Distance_Measure_01_0)</l>
+<c>    * Measure 01: Do something with the results</c>
+<l>    gen_cross_contour_xld (Cross10, Row_Measure_01_0, Column_Measure_01_0, 6, Phi)</l>
+<c>    * Measure 01: Clear measure when done</c>
+<l>    close_measure (MsrHandle_Measure_01_0)</l>
+<c>    *****************************************************************************</c>
+<l>    if(|Row_Measure_01_0|==4)</l>
+<l>        up_x:=Column_Measure_01_0[1]</l>
+<l>        up_y:=Row_Measure_01_0[1]</l>
+<l>        dn_x:=Column_Measure_01_0[2]</l>
+<l>        dn_y:=Row_Measure_01_0[2]</l>
+<l>    else</l>
+<l>        isError:=true</l>
+<l>        ErrorCode:=6</l>
+<c>        *返回3</c>
+<l>        return ()  </l>
+<l>    endif</l>
+<c>    *交点</c>
+<l>    intersection_lines (up_y, up_x, dn_y, dn_x,   Qy2, Qx2, Qy, Qx, Row4, Column4, IsOverlapping)</l>
+<l>    gen_cross_contour_xld (Cross8, Row4, Column4, 6, Phi1)</l>
+<c>    *中心线到目标线的长度</c>
+<l>    distance_pp (Row4, Column4,up_y, up_x, Distance)</l>
+<l>    distance_pp (Row4, Column4,dn_y, dn_x, Distance2)</l>
+<c>    *求两个圆心之间的距离</c>
+<l>    distance_pp (Row2, Column2,Row1, Column1, Dis_pp)</l>
+<l>catch (Exception)</l>
+<l>    dev_get_exception_data (Exception, 'error_msg', ErrorMsg)</l>
+<l>    disp_message (WindowHandle, 'Error message: ' + ErrorMsg, 'window', 12, 12, 'red', 'true')</l>
+<l>    isError:=true</l>
+<l>    ErrorCode:=4</l>
+<c>    *返回1</c>
+<l>    return ()</l>
+<l>endtry</l>
+<c>*返回值</c>
+<l>dis_rr := Dis_pp*factor</l>
+<c>*长度</c>
+<l>length:= (Dis_pp+Radius2+Radius)*factor</l>
+<c>*宽度</c>
+<l>width:= (Radius2+Radius)*factor</l>
+<c>*角度方向（弧度制）</c>
+<l>angle:=Phi1</l>
+<c>*中心点 x坐标</c>
+<l>center_x :=cen_x*factor</l>
+<l>center_y :=cen_y*factor</l>
+<c>*上边缘距离中轴线</c>
+<l>up_margin := Distance*factor</l>
+<l>down_margin := Distance2*factor</l>
+<c></c>
+<c>*两个圆心之间的距离</c>
+<l>DrawIndica (Column1, Row1, Column2, Row2, Phi1, Radius*3, dis_rr, WindowHandle, 0)</l>
+<l>DrawIndica (Qx, Qy, Qx2, Qy2, Phi1, Radius*4, length, WindowHandle, 0)</l>
+<l>DrawIndica (upx1, upy1, dnx2, dny2, Phi, Radius+100, width, WindowHandle, 1)</l>
+<l>DrawIndica (Column4, Row4, up_x, up_y, Phi1, Radius*2, up_margin, WindowHandle, 1)</l>
+<l>DrawIndica (Column4, Row4, dn_x, dn_y, Phi1, Radius*2, down_margin, WindowHandle, 1)</l>
+<l>return ()</l>
+</body>
+<docu id="DoubleCircle2">
+<parameters>
+<parameter id="ErrorCode"/>
+<parameter id="WindowHandle"/>
+<parameter id="angle"/>
+<parameter id="center_x"/>
+<parameter id="center_y"/>
+<parameter id="deviation_value1"/>
+<parameter id="deviation_value2"/>
+<parameter id="deviation_value3"/>
+<parameter id="dis_rr"/>
+<parameter id="down_margin"/>
+<parameter id="factor"/>
+<parameter id="half_margin"/>
+<parameter id="imagesrc"/>
+<parameter id="isError"/>
+<parameter id="length"/>
+<parameter id="regionref"/>
+<parameter id="regionsrc"/>
+<parameter id="sigma"/>
+<parameter id="thr"/>
+<parameter id="up_margin"/>
+<parameter id="width"/>
+</parameters>
+</docu>
+</procedure>
+<procedure name="SingleCircle">
+<interface>
+<io>
+<par name="imagesrc" base_type="iconic" dimension="0"/>
+<par name="regionsrc" base_type="iconic" dimension="0"/>
+<par name="regionref" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="deviation_value1" base_type="ctrl" dimension="0"/>
+<par name="deviation_value2" base_type="ctrl" dimension="0"/>
+<par name="factor" base_type="ctrl" dimension="0"/>
+<par name="WindowHandle" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="length" base_type="ctrl" dimension="0"/>
+<par name="center_x" base_type="ctrl" dimension="0"/>
+<par name="center_y" base_type="ctrl" dimension="0"/>
+<par name="isError" base_type="ctrl" dimension="0"/>
+<par name="ErrorCode" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>isError:=false</l>
+<l>ErrorCode:=0</l>
+<c></c>
+<l>try</l>
+<c>    *求参考平面灰度值</c>
+<l>    gray_features (regionref, imagesrc, 'mean', Value)</l>
+<l>    gray_ref:=Value</l>
+<c>    *求出检测的区域的面积</c>
+<l>    area_center (regionsrc, AreaRegion, Row5, Column5)</l>
+<c>    *抠出目标</c>
+<l>*    deviation_value1:=50</l>
+<l>    reduce_domain (imagesrc, regionsrc, ImageReduced)</l>
+<c></c>
+<l>    threshold (ImageReduced, Union, [0,gray_ref+deviation_value2], [gray_ref-deviation_value1,255])    </l>
+<l>    union1 (Union, Union)</l>
+<c>    *预处理</c>
+<l>    closing_circle (Union, RegionClosing, 5.5)</l>
+<l>    fill_up (RegionClosing, RegionFillUp)</l>
+<l>    erosion_circle (RegionFillUp, RegionErosion, 5.5)</l>
+<l>    dilation_circle (RegionErosion, RegionDilation, 5.5)</l>
+<l>    connection (RegionDilation, ConnectedRegions)</l>
+<l>    select_shape (ConnectedRegions, SelectedRegions, 'roundness', 'and', 0.8092, 2)</l>
+<l>    count_obj (SelectedRegions, Number1)</l>
+<l>    if(Number1 &lt;1)</l>
+<l>        isError:=true</l>
+<l>        ErrorCode:=1</l>
+<c>        *返回1</c>
+<l>        return ()</l>
+<l>    endif</l>
+<l>    select_obj (SelectedRegions, ObjectSelected1, 1)</l>
+<l>    gen_contour_region_xld (ObjectSelected1, Contours, 'border')</l>
+<l>    fit_circle_contour_xld (Contours, 'geotukey', -1, 2, 0, 10, 1, Row1, Column1, Radius, StartPhi, EndPhi, PointOrder)</l>
+<l>    if(|Row1| != 1)</l>
+<l>        isError:=true</l>
+<l>        ErrorCode:=2</l>
+<c>        *返回1</c>
+<l>        return ()</l>
+<l>    endif</l>
+<l>    gen_circle_contour_xld (ContCircle, Row1, Column1, Radius, 0, 6.28318, 'positive', 1)</l>
+<l>    dev_display (ContCircle)</l>
+<l>    x1:=Column1</l>
+<l>    y1:=Row1-Radius</l>
+<l>    x2:=Column1</l>
+<l>    y2:=Row1+Radius</l>
+<l>    Length:=Radius*2*factor</l>
+<l>    length := Length</l>
+<l>    center_x := Column1</l>
+<l>    center_y := Row1</l>
+<l>    DrawIndica (x1, y1, x2, y2, 0, Radius*2.5, Length, WindowHandle, 1)</l>
+<l>catch (Exception)</l>
+<l>    dev_get_exception_data (Exception, 'error_msg', ErrorMsg)</l>
+<l>    disp_message (WindowHandle, 'Error message: ' + ErrorMsg, 'window', 12, 12, 'red', 'true')</l>
+<l>    isError:=true</l>
+<l>    ErrorCode:=4</l>
+<c>    *返回1</c>
+<l>    return ()</l>
+<l>endtry</l>
+<l>return ()</l>
+</body>
+<docu id="SingleCircle">
+<parameters>
+<parameter id="ErrorCode"/>
+<parameter id="WindowHandle"/>
+<parameter id="center_x"/>
+<parameter id="center_y"/>
+<parameter id="deviation_value1"/>
+<parameter id="deviation_value2"/>
+<parameter id="factor"/>
+<parameter id="imagesrc"/>
+<parameter id="isError"/>
+<parameter id="length"/>
+<parameter id="regionref"/>
+<parameter id="regionsrc"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
